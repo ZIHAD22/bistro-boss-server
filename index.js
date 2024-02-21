@@ -10,7 +10,10 @@ app.use(cors());
 app.use(express.json());
 
 // dataBase;
-const uri = `mongodb+srv://admin:${process.env.DB_PASS}@cluster0.8k9mciy.mongodb.net/?retryWrites=true&w=majority`;
+const uri =
+  process.env.NODE_ENV === "development"
+    ? process.env.DEV_URL
+    : process.env.PRO_URL;
 
 console.log(uri);
 
@@ -29,6 +32,7 @@ async function run() {
 
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
+      console.log(result);
       res.send(result);
     });
     app.get("/review", async (req, res) => {
