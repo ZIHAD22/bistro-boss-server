@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 console.log(process.env.NODE_ENV);
 
 // middleware
@@ -31,6 +31,7 @@ async function run() {
     const reviewCollection = client.db("Bistro-Boss").collection("reviews");
     const cartCollection = client.db("Bistro-Boss").collection("carts");
 
+    // get
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
       res.send(result);
@@ -39,9 +40,23 @@ async function run() {
       const result = await reviewCollection.find().toArray();
       res.send(result);
     });
+    app.get("/carts", async (req, res) => {
+      const result = await cartCollection.find().toArray();
+      res.send(result);
+    });
 
+    // post
     app.post("/carts", async (req, res) => {
       const result = await cartCollection.insertOne(req.body);
+      res.send(result);
+    });
+
+    // delete
+    app.delete("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await cartCollection.deleteOne({
+        menuId: id,
+      });
       res.send(result);
     });
 
